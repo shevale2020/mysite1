@@ -79,8 +79,8 @@ row_number() over (order by id) as srNo,DDlColumn3
 
 DDlColumn1	DDlColumn2	DDlColumn3
 Sam	         RED     	India
-Ram			     Blue		  US
-			       Orange		Chaina
-			       White		Uk
-		      	 Greem	
+Ram			 Blue		US
+			 Orange		Chaina
+			 White		Uk
+			 Greem	
 
