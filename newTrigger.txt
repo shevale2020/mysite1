@@ -1,0 +1,61 @@
+USE [AMS]
+GO
+/****** Object:  Trigger [dbo].[insert_Staff_table]    Script Date: 4/18/2019 10:46:46 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER TRIGGER [dbo].[insert_Staff_table] ON [dbo].[Staff]
+	AFTER INSERT
+	AS
+	BEGIN
+
+		INSERT INTO
+		Users
+		(
+		  [UserName],[Passward],[FullName],[StaffID],[IsAdmin],[IsEnabled],[CreatedBy]
+		  ,[CreatedOn],[ModifiedBy],[ModifiedOn],[Role]
+		)
+		SELECT
+			[StaffUserName],[StaffPassword],[StaffName],[StaffID],
+			Case when Role='A' then 1 else 0 end ,
+			IsActive,
+			[CreatedBy],[CreatedOn]
+			,[ModifiedBy],[ModifiedOn],[Role]
+		FROM
+			inserted 
+
+			
+
+	END
+
+
+USE [AMS]
+GO
+/****** Object:  Trigger [dbo].[update_Staff_table_updateUser]    Script Date: 4/18/2019 10:47:05 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+	ALTER TRIGGER [dbo].[update_Staff_table_updateUser] ON [dbo].[Staff]
+	AFTER update
+	AS
+	BEGIN
+
+	Declare @staffid int =0
+	select @staffid= staffid from inserted
+			update users 
+					set [UserName] =i.StaffUserName,
+						[Passward]=i.StaffPassword,
+						[FullName]=i.StaffName,
+						[IsAdmin]= case when i.Role ='A' then 1 else 0 end ,
+						[Role]=i.Role,  
+						[IsEnabled]=i.IsActive,
+						[ModifiedBy]=i.ModifiedBy,
+						[ModifiedOn]=SYSDATETIME()
+			FROM Users u inner join
+				   inserted i on u.StaffID = i.StaffID where i.StaffID=@staffid
+
+	END
